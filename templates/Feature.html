@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VoltDrive – Features</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family:'Inter',sans-serif; background:linear-gradient(135deg,#6a6fd8 0%,#7b5ea7 45%,#9b59b6 100%); display:flex; flex-direction:column; min-height:100vh; }
+
+    /* ── NAV ── */
+    nav { width:100%; background:rgba(255,255,255,.15); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.22); padding:0 2.5rem; height:64px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; position:sticky; top:0; z-index:100; }
+    .nav-brand { font-size:1.22rem; font-weight:800; color:#fff; letter-spacing:.02em; text-decoration:none; }
+    .nav-links { display:flex; align-items:center; gap:.25rem; list-style:none; }
+    .nav-links li a { display:block; padding:.42rem 1.05rem; border-radius:8px; color:rgba(255,255,255,.88); text-decoration:none; font-size:.9rem; font-weight:500; transition:background .2s,color .2s; white-space:nowrap; }
+    .nav-links li a:hover { background:rgba(255,255,255,.18); color:#fff; }
+    .nav-links li a.active { background:rgba(255,255,255,.25); color:#fff; font-weight:700; }
+    .nav-links li a.chat-nav { background:rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.4); color:#fff; font-weight:600; display:flex; align-items:center; gap:.35rem; padding:.4rem 1rem; }
+    .nav-links li a.chat-nav:hover { background:rgba(255,255,255,.32); }
+
+    /* ── PAGE ── */
+    .page-wrap { flex:1; padding:3rem 2rem; }
+    .content { max-width:900px; margin:0 auto; }
+
+    .page-hero { margin-bottom:2.5rem; }
+    .page-hero-badge { display:inline-flex; align-items:center; gap:.4rem; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.3); color:#fff; font-size:.75rem; font-weight:700; padding:.28rem .85rem; border-radius:999px; margin-bottom:.8rem; }
+    .page-hero-title { font-size:clamp(1.6rem,3vw,2.4rem); font-weight:800; color:#fff; line-height:1.25; margin-bottom:.6rem; }
+    .page-hero-sub { font-size:.95rem; color:rgba(255,255,255,.78); line-height:1.7; max-width:580px; }
+
+    /* feature cards grid */
+    .feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+    .fcard {
+      background:#fff; border-radius:18px; box-shadow:0 6px 24px rgba(0,0,0,.12);
+      padding:1.6rem 1.7rem; display:flex; flex-direction:column; gap:.5rem;
+      transition:transform .2s, box-shadow .2s;
+    }
+    .fcard:hover { transform:translateY(-3px); box-shadow:0 12px 36px rgba(0,0,0,.18); }
+    .fcard-top { display:flex; align-items:center; gap:.75rem; margin-bottom:.2rem; }
+    .fcard-icon-wrap { width:48px; height:48px; border-radius:14px; background:linear-gradient(135deg,#ede8ff,#d8e8ff); display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
+    .fcard-title { font-size:.98rem; font-weight:800; color:#3d2e6e; }
+    .fcard-desc { font-size:.83rem; color:#6a5a8e; line-height:1.7; }
+    .fcard-tags { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.5rem; }
+    .ftag { font-size:.67rem; font-weight:600; padding:.14rem .55rem; border-radius:999px; background:#ede8ff; color:#5338a8; border:1px solid #d0c8f5; }
+    .ftag.green { background:#edfaf4; color:#1f9b6b; border-color:#a3e9c8; }
+    .ftag.blue  { background:#e8f4ff; color:#1a6db5; border-color:#b0d8f8; }
+
+    /* highlight strip */
+    .highlight-strip {
+      background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25);
+      border-radius:16px; padding:1.4rem 1.8rem; margin-bottom:1.4rem;
+      display:flex; align-items:center; gap:1.2rem;
+    }
+    .hs-icon { font-size:2rem; flex-shrink:0; }
+    .hs-title { font-size:.95rem; font-weight:800; color:#fff; margin-bottom:.2rem; }
+    .hs-desc { font-size:.82rem; color:rgba(255,255,255,.78); line-height:1.6; }
+
+    /* ── CONTACT FOOTER ── */
+    footer { background:rgba(255,255,255,.1); border-top:1px solid rgba(255,255,255,.18); backdrop-filter:blur(8px); padding:2.5rem 2rem 2rem; }
+    .footer-inner { max-width:900px; margin:0 auto; }
+    .footer-title { font-size:1.05rem; font-weight:800; color:#fff; margin-bottom:.18rem; }
+    .footer-sub { font-size:.78rem; color:rgba(255,255,255,.62); margin-bottom:1.4rem; }
+    .footer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.9rem; }
+    .fcontact { display:flex; align-items:center; gap:.8rem; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:12px; padding:.85rem 1rem; text-decoration:none; transition:background .2s; }
+    .fcontact:hover { background:rgba(255,255,255,.22); }
+    .fcontact-icon { width:38px; height:38px; border-radius:10px; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .fcontact-label { font-size:.68rem; color:rgba(255,255,255,.58); font-weight:500; }
+    .fcontact-value { font-size:.84rem; color:#fff; font-weight:600; }
+    .footer-copy { margin-top:1.2rem; font-size:.72rem; color:rgba(255,255,255,.4); text-align:center; }
+
+    @media(max-width:640px){ nav{padding:0 1rem;} .feature-grid{grid-template-columns:1fr;} .footer-grid{grid-template-columns:1fr;} }
+
+    /* ═════════ CONTACT MODAL ═════════ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 20px;
+      padding: 2rem 2.2rem; max-width: 420px; width: 90%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3); position: relative;
+      animation: popIn .22s ease;
+    }
+    @keyframes popIn { from { opacity:0; transform:scale(.92) translateY(10px); } to { opacity:1; transform:none; } }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; font-size: 1.3rem;
+      color: #bbb; cursor: pointer; line-height: 1;
+    }
+    .modal-close:hover { color: #888; }
+    .modal-title { font-size: 1.15rem; font-weight: 800; color: #5338a8; margin-bottom: .2rem; }
+    .modal-sub { font-size: .8rem; color: #aaa; margin-bottom: 1.5rem; }
+    .contact-item {
+      display: flex; align-items: center; gap: .9rem;
+      padding: .85rem 1rem; border-radius: 12px;
+      background: #f8f7ff; border: 1px solid #ede8f8;
+      margin-bottom: .75rem; text-decoration: none; transition: background .2s;
+    }
+    .contact-item:hover { background: #ede8f8; }
+    .contact-item:last-of-type { margin-bottom: 0; }
+    .contact-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .contact-icon.purple { background: #ede8f8; }
+    .contact-icon.green  { background: #e8f5e9; }
+    .contact-icon.blue   { background: #e3f2fd; }
+    .contact-label { font-size: .7rem; color: #aaa; font-weight: 500; }
+    .contact-value { font-size: .9rem; color: #333; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-brand" href="{{ url_for('index') }}">⚡ VoltDrive</a>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('index') }}">Home</a></li>
+      <li><a href="{{ url_for('about') }}">About</a></li>
+      <li><a href="{{ url_for('feature') }}" class="active">Feature</a></li>
+      <li><a href="{{ url_for('vehicle') }}">Vehicle</a></li>
+      <li><a href="#" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);font-weight:600;padding:.42rem 1.05rem;border-radius:8px;color:#fff;text-decoration:none;font-size:.9rem;white-space:nowrap;" onclick="document.getElementById('contact-modal').classList.add('open');return false;">✉ Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="content">
+
+      <div class="page-hero">
+        <div class="page-hero-badge">🚀 Platform Features</div>
+        <h1 class="page-hero-title">Everything VoltDrive<br/>Offers</h1>
+        <p class="page-hero-sub">A complete suite of real-time tools for EV drivers finding their next charge and planners deciding where infrastructure is needed most.</p>
+      </div>
+
+      <!-- highlight -->
+      <div class="highlight-strip">
+        <div class="hs-icon">🌐</div>
+        <div>
+          <div class="hs-title">Powered by Live OpenChargeMap API</div>
+          <div class="hs-desc">Every prediction, station listing, and recommendation on VoltDrive is derived from live data fetched directly from OpenChargeMap — the world's largest open EV charging network database. Smart 6-hour caching keeps the experience fast even if the API is temporarily unreachable.</div>
+        </div>
+      </div>
+
+      <div class="feature-grid">
+
+        <div class="fcard">
+          <div class="fcard-top">
+            <div class="fcard-icon-wrap">📍</div>
+            <div class="fcard-title">Nearby Station Finder</div>
+          </div>
+          <div class="fcard-desc">Locate the closest available EV charging stations in real time using your GPS coordinates. Results are sorted by walking or driving distance, with live port availability shown for each station. Filter by port type — Fast, Medium, or Slow — and set a search radius of up to 30 km.</div>
+          <div class="fcard-tags">
+            <span class="ftag">GPS-based</span>
+            <span class="ftag blue">Live availability</span>
+            <span class="ftag">Up to 30 km radius</span>
+          </div>
+        </div>
+
+        <div class="fcard">
+          <div class="fcard-top">
+            <div class="fcard-icon-wrap">🔮</div>
+            <div class="fcard-title">Future Station Prediction</div>
+          </div>
+          <div class="fcard-desc">A multi-factor greedy algorithm evaluates all 14 Kerala districts against 7 scoring criteria derived entirely from live OCM data. Districts are ranked by need score and the system identifies which areas require new DC fast chargers, AC fast chargers, or slow chargers — with full explanations.</div>
+          <div class="fcard-tags">
+            <span class="ftag">14 districts</span>
+            <span class="ftag green">7 scoring factors</span>
+            <span class="ftag">Greedy algorithm</span>
+          </div>
+        </div>
+
+        <div class="fcard">
+          <div class="fcard-top">
+            <div class="fcard-icon-wrap">⚡</div>
+            <div class="fcard-title">Real-Time Port Availability</div>
+          </div>
+          <div class="fcard-desc">Port status is updated every 15–45 seconds using time-aware simulation models. Morning and evening rush hours (8–10 AM and 6–8 PM) trigger higher station utilisation, while off-peak hours show improved availability — reflecting real charging behaviour across Kerala's EV fleet.</div>
+          <div class="fcard-tags">
+            <span class="ftag blue">Updates every 15–45s</span>
+            <span class="ftag">Rush-hour aware</span>
+            <span class="ftag green">Live utilisation %</span>
+          </div>
+        </div>
+
+        <div class="fcard">
+          <div class="fcard-top">
+            <div class="fcard-icon-wrap">🗺️</div>
+            <div class="fcard-title">OSRM Navigation</div>
+          </div>
+          <div class="fcard-desc">Turn-by-turn driving navigation is powered by OSRM (Open Source Routing Machine). When you select a charging station, VoltDrive calculates the accurate road distance and estimated travel time from your current location — no third-party map subscription required.</div>
+          <div class="fcard-tags">
+            <span class="ftag">OSRM routing</span>
+            <span class="ftag blue">Drive time estimate</span>
+            <span class="ftag">Open source</span>
+          </div>
+        </div>
+
+        <div class="fcard">
+          <div class="fcard-top">
+            <div class="fcard-icon-wrap">🔌</div>
+            <div class="fcard-title">Multi-Connector Support</div>
+          </div>
+          <div class="fcard-desc">VoltDrive supports all major Indian EV connector standards. DC fast charging via CCS2 and CHAdeMO for cars and buses, AC fast charging via Type 2 (IEC 62196) for cars and vans, and AC slow charging via the Bharat AC-001 standard for two-wheelers and three-wheelers.</div>
+          <div class="fcard-tags">
+            <span class="ftag">CCS2 / CHAdeMO</span>
+            <span class="ftag blue">Type 2 IEC 62196</span>
+            <span class="ftag green">Bharat AC-001</span>
+          </div>
+        </div>
+
+        <div class="fcard">
+          <div class="fcard-top">
+            <div class="fcard-icon-wrap">📊</div>
+            <div class="fcard-title">Demand Analysis</div>
+          </div>
+          <div class="fcard-desc">Each district is classified as High, Medium, or Low demand based on EV density, station count, port availability, operator reliability, and growth indicators all derived from live data. High-demand districts with zero infrastructure are flagged as urgently needing immediate deployment.</div>
+          <div class="fcard-tags">
+            <span class="ftag green">High / Medium / Low</span>
+            <span class="ftag">Live data driven</span>
+            <span class="ftag blue">District-level</span>
+          </div>
+        </div>
+
+        <div class="fcard">
+          <div class="fcard-top">
+            <div class="fcard-icon-wrap">🛡️</div>
+            <div class="fcard-title">SDN-Based Scheduling</div>
+          </div>
+          <div class="fcard-desc">Software Defined Networking principles centralise the intelligence that normally lives inside each individual charger. The SDN controller has a global view of all stations — their capacity, demand, operator, and connectivity — enabling optimised charging session allocation and load balancing across the network.</div>
+          <div class="fcard-tags">
+            <span class="ftag">SDN architecture</span>
+            <span class="ftag blue">Load balancing</span>
+            <span class="ftag">Centralised control</span>
+          </div>
+        </div>
+
+        <div class="fcard">
+          <div class="fcard-top">
+            <div class="fcard-icon-wrap">🔄</div>
+            <div class="fcard-title">Smart Caching &amp; Refresh</div>
+          </div>
+          <div class="fcard-desc">Live API data is cached locally for 6 hours to ensure fast page loads even during API downtime. A background refresh thread automatically re-fetches fresh data every 6 hours without any disruption. If live data is unavailable, a validated fallback dataset maintains full functionality.</div>
+          <div class="fcard-tags">
+            <span class="ftag">6-hour cache</span>
+            <span class="ftag green">Auto-refresh</span>
+            <span class="ftag blue">Fallback dataset</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════ CONTACT FOOTER ═══════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-title">✉ Contact Us</div>
+      <div class="footer-sub">Kerala EV Charging Station Finder · SDN Project</div>
+      <div class="footer-grid">
+        <a href="mailto:ev.kerala@example.com" class="fcontact">
+          <div class="fcontact-icon">📧</div>
+          <div><div class="fcontact-label">Email</div><div class="fcontact-value">ev.kerala@example.com</div></div>
+        </a>
+        <a href="tel:+919876543210" class="fcontact">
+          <div class="fcontact-icon">📞</div>
+          <div><div class="fcontact-label">Phone</div><div class="fcontact-value">+91 98765 43210</div></div>
+        </a>
+        <div class="fcontact" style="cursor:default">
+          <div class="fcontact-icon">📍</div>
+          <div><div class="fcontact-label">Address</div><div class="fcontact-value">Kerala, India</div></div>
+        </div>
+      </div>
+      <div class="footer-copy">© 2025 VoltDrive · Context-Aware EV Charging Station Management</div>
+    </div>
+  </footer>
+
+  <!-- ═══════════ CONTACT MODAL ═══════════ -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="document.getElementById('contact-modal').classList.remove('open')">✕</button>
+      <p class="modal-title">✉ Contact Us</p>
+      <p class="modal-sub">Kerala EV Charging Station Finder · SDN Project</p>
+      <a href="mailto:ev.kerala@example.com" class="contact-item">
+        <div class="contact-icon purple">📧</div>
+        <div><div class="contact-label">Email</div><div class="contact-value">ev.kerala@example.com</div></div>
+      </a>
+      <a href="tel:+919876543210" class="contact-item">
+        <div class="contact-icon green">📞</div>
+        <div><div class="contact-label">Phone</div><div class="contact-value">+91 98765 43210</div></div>
+      </a>
+      <div class="contact-item" style="cursor:default">
+        <div class="contact-icon blue">📍</div>
+        <div><div class="contact-label">Address</div><div class="contact-value">Kerala, India</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('contact-modal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  </script>
+</body>
+</html>

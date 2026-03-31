@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VoltDrive – Vehicles</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family:'Inter',sans-serif; background:linear-gradient(135deg,#6a6fd8 0%,#7b5ea7 45%,#9b59b6 100%); display:flex; flex-direction:column; min-height:100vh; }
+
+    /* ── NAV ── */
+    nav { width:100%; background:rgba(255,255,255,.15); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.22); padding:0 2.5rem; height:64px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; position:sticky; top:0; z-index:100; }
+    .nav-brand { font-size:1.22rem; font-weight:800; color:#fff; letter-spacing:.02em; text-decoration:none; }
+    .nav-links { display:flex; align-items:center; gap:.25rem; list-style:none; }
+    .nav-links li a { display:block; padding:.42rem 1.05rem; border-radius:8px; color:rgba(255,255,255,.88); text-decoration:none; font-size:.9rem; font-weight:500; transition:background .2s,color .2s; white-space:nowrap; }
+    .nav-links li a:hover { background:rgba(255,255,255,.18); color:#fff; }
+    .nav-links li a.active { background:rgba(255,255,255,.25); color:#fff; font-weight:700; }
+    .nav-links li a.chat-nav { background:rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.4); color:#fff; font-weight:600; display:flex; align-items:center; gap:.35rem; padding:.4rem 1rem; }
+    .nav-links li a.chat-nav:hover { background:rgba(255,255,255,.32); }
+
+    /* ── PAGE ── */
+    .page-wrap { flex:1; padding:3rem 2rem; }
+    .content { max-width:900px; margin:0 auto; }
+
+    .page-hero { margin-bottom:2.5rem; }
+    .page-hero-badge { display:inline-flex; align-items:center; gap:.4rem; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.3); color:#fff; font-size:.75rem; font-weight:700; padding:.28rem .85rem; border-radius:999px; margin-bottom:.8rem; }
+    .page-hero-title { font-size:clamp(1.6rem,3vw,2.4rem); font-weight:800; color:#fff; line-height:1.25; margin-bottom:.6rem; }
+    .page-hero-sub { font-size:.95rem; color:rgba(255,255,255,.78); line-height:1.7; max-width:580px; }
+
+    /* connector legend */
+    .legend { display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:2rem; }
+    .legend-item { display:flex; align-items:center; gap:.45rem; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:.3rem .9rem; font-size:.75rem; font-weight:600; color:#fff; }
+    .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+    /* vehicle cards */
+    .vehicle-grid { display:flex; flex-direction:column; gap:1.2rem; }
+    .vcard {
+      background:#fff; border-radius:18px; box-shadow:0 6px 24px rgba(0,0,0,.12);
+      overflow:hidden; display:flex;
+      transition:transform .2s, box-shadow .2s;
+    }
+    .vcard:hover { transform:translateY(-3px); box-shadow:0 12px 36px rgba(0,0,0,.18); }
+    .vcard-stripe { width:6px; flex-shrink:0; }
+    .vc-purple { background:linear-gradient(to bottom,#6a6fd8,#9b59b6); }
+    .vc-teal   { background:linear-gradient(to bottom,#11998e,#38ef7d); }
+    .vc-orange { background:linear-gradient(to bottom,#f7971e,#ffd200); }
+    .vc-pink   { background:linear-gradient(to bottom,#ee0979,#ff6a00); }
+    .vc-blue   { background:linear-gradient(to bottom,#1a6db5,#38b2f5); }
+    .vc-green  { background:linear-gradient(to bottom,#1f9b6b,#56d08d); }
+
+    .vcard-body { display:flex; align-items:flex-start; gap:1.1rem; padding:1.5rem 1.7rem; flex:1; }
+    .vcard-icon-wrap { width:56px; height:56px; flex-shrink:0; border-radius:16px; background:linear-gradient(135deg,#ede8ff,#d8e8ff); display:flex; align-items:center; justify-content:center; font-size:1.7rem; }
+    .vcard-content { flex:1; }
+    .vcard-top { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:.2rem; }
+    .vcard-title { font-size:1rem; font-weight:800; color:#3d2e6e; }
+    .vcard-connector { font-size:.74rem; font-weight:700; color:#9b59b6; background:#ede8ff; padding:.18rem .65rem; border-radius:999px; border:1px solid #d0c8f5; white-space:nowrap; }
+    .vcard-desc { font-size:.84rem; color:#6a5a8e; line-height:1.72; margin-bottom:.7rem; }
+
+    .vcard-specs { display:grid; grid-template-columns:repeat(3,1fr); gap:.55rem; margin-bottom:.8rem; }
+    .spec-item { background:#f7f5ff; border:1px solid #e4dffa; border-radius:10px; padding:.55rem .7rem; }
+    .spec-label { font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#9b8de8; margin-bottom:.2rem; }
+    .spec-value { font-size:.8rem; font-weight:700; color:#3d2e6e; }
+
+    .vtag-row { display:flex; flex-wrap:wrap; gap:.32rem; }
+    .vtag { font-size:.67rem; font-weight:600; padding:.14rem .52rem; border-radius:999px; }
+    .vtag.purple { background:#ede8ff; color:#5338a8; border:1px solid #d0c8f5; }
+    .vtag.green  { background:#edfaf4; color:#1f9b6b; border:1px solid #a3e9c8; }
+    .vtag.blue   { background:#e8f4ff; color:#1a6db5; border:1px solid #b0d8f8; }
+    .vtag.red    { background:#fff0f3; color:#d63060; border:1px solid #ffc0d0; }
+    .vtag.orange { background:#fff7e6; color:#d47800; border:1px solid #ffd98a; }
+
+    /* models strip */
+    .models-strip { background:#f7f5ff; border-top:1px solid #e4dffa; padding:.7rem 1.7rem .7rem calc(6px + 1.7rem); }
+    .models-label { font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#9b8de8; margin-bottom:.3rem; }
+    .models-list { font-size:.78rem; color:#5338a8; font-weight:600; }
+
+    /* ── CONTACT FOOTER ── */
+    footer { background:rgba(255,255,255,.1); border-top:1px solid rgba(255,255,255,.18); backdrop-filter:blur(8px); padding:2.5rem 2rem 2rem; }
+    .footer-inner { max-width:900px; margin:0 auto; }
+    .footer-title { font-size:1.05rem; font-weight:800; color:#fff; margin-bottom:.18rem; }
+    .footer-sub { font-size:.78rem; color:rgba(255,255,255,.62); margin-bottom:1.4rem; }
+    .footer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.9rem; }
+    .fcontact { display:flex; align-items:center; gap:.8rem; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:12px; padding:.85rem 1rem; text-decoration:none; transition:background .2s; }
+    .fcontact:hover { background:rgba(255,255,255,.22); }
+    .fcontact-icon { width:38px; height:38px; border-radius:10px; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .fcontact-label { font-size:.68rem; color:rgba(255,255,255,.58); font-weight:500; }
+    .fcontact-value { font-size:.84rem; color:#fff; font-weight:600; }
+    .footer-copy { margin-top:1.2rem; font-size:.72rem; color:rgba(255,255,255,.4); text-align:center; }
+
+    @media(max-width:640px){ nav{padding:0 1rem;} .vcard{flex-direction:column;} .vcard-stripe{width:100%;height:5px;} .vcard-specs{grid-template-columns:1fr 1fr;} .footer-grid{grid-template-columns:1fr;} }
+
+    /* ═════════ CONTACT MODAL ═════════ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 20px;
+      padding: 2rem 2.2rem; max-width: 420px; width: 90%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3); position: relative;
+      animation: popIn .22s ease;
+    }
+    @keyframes popIn { from { opacity:0; transform:scale(.92) translateY(10px); } to { opacity:1; transform:none; } }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; font-size: 1.3rem;
+      color: #bbb; cursor: pointer; line-height: 1;
+    }
+    .modal-close:hover { color: #888; }
+    .modal-title { font-size: 1.15rem; font-weight: 800; color: #5338a8; margin-bottom: .2rem; }
+    .modal-sub { font-size: .8rem; color: #aaa; margin-bottom: 1.5rem; }
+    .contact-item {
+      display: flex; align-items: center; gap: .9rem;
+      padding: .85rem 1rem; border-radius: 12px;
+      background: #f8f7ff; border: 1px solid #ede8f8;
+      margin-bottom: .75rem; text-decoration: none; transition: background .2s;
+    }
+    .contact-item:hover { background: #ede8f8; }
+    .contact-item:last-of-type { margin-bottom: 0; }
+    .contact-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .contact-icon.purple { background: #ede8f8; }
+    .contact-icon.green  { background: #e8f5e9; }
+    .contact-icon.blue   { background: #e3f2fd; }
+    .contact-label { font-size: .7rem; color: #aaa; font-weight: 500; }
+    .contact-value { font-size: .9rem; color: #333; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-brand" href="{{ url_for('index') }}">⚡ VoltDrive</a>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('index') }}">Home</a></li>
+      <li><a href="{{ url_for('about') }}">About</a></li>
+      <li><a href="{{ url_for('feature') }}">Feature</a></li>
+      <li><a href="{{ url_for('vehicle') }}" class="active">Vehicle</a></li>
+      <li><a href="#" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);font-weight:600;padding:.42rem 1.05rem;border-radius:8px;color:#fff;text-decoration:none;font-size:.9rem;white-space:nowrap;" onclick="document.getElementById('contact-modal').classList.add('open');return false;">✉ Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="content">
+
+      <div class="page-hero">
+        <div class="page-hero-badge">🚗 Supported Vehicles</div>
+        <h1 class="page-hero-title">Every EV on Kerala Roads,<br/>Supported</h1>
+        <p class="page-hero-sub">VoltDrive covers all EV categories and connector standards in India — from DC fast-charging SUVs to Bharat AC-001 two-wheelers. Find the right charger for your vehicle every time.</p>
+      </div>
+
+      <!-- connector legend -->
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#d63060"></div>DC Fast ≥50 kW · CCS2/CHAdeMO</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1a6db5"></div>AC Fast 22 kW · Type 2 IEC 62196</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1f9b6b"></div>AC Slow 3.3–7.4 kW · Bharat AC-001</div>
+      </div>
+
+      <div class="vehicle-grid">
+
+        <!-- 1. Electric Cars -->
+        <div class="vcard">
+          <div class="vcard-stripe vc-purple"></div>
+          <div class="vcard-body">
+            <div class="vcard-icon-wrap">🚗</div>
+            <div class="vcard-content">
+              <div class="vcard-top">
+                <div class="vcard-title">Electric Cars &amp; Sedans</div>
+                <div class="vcard-connector">CCS2 / CHAdeMO · Type 2</div>
+              </div>
+              <div class="vcard-desc">The most common EV segment on Kerala roads. These vehicles support both AC home charging and DC fast charging at public stations. Battery sizes typically range from 30–82 kWh, giving a real-world range of 250–450 km per charge depending on driving conditions and AC usage.</div>
+              <div class="vcard-specs">
+                <div class="spec-item"><div class="spec-label">Max Charge Speed</div><div class="spec-value">DC 50–150 kW</div></div>
+                <div class="spec-item"><div class="spec-label">AC Charging</div><div class="spec-value">7.4–22 kW</div></div>
+                <div class="spec-item"><div class="spec-label">Typical Range</div><div class="spec-value">250–450 km</div></div>
+              </div>
+              <div class="vtag-row">
+                <span class="vtag red">DC Fast ≥50 kW</span>
+                <span class="vtag blue">AC Fast 22 kW</span>
+                <span class="vtag purple">CCS2 / CHAdeMO</span>
+                <span class="vtag purple">Type 2 IEC 62196</span>
+              </div>
+            </div>
+          </div>
+          <div class="models-strip">
+            <div class="models-label">Popular Models in Kerala</div>
+            <div class="models-list">Tata Nexon EV · Tata Tigor EV · MG ZS EV · Hyundai Kona Electric · Kia EV6 · BYD Atto 3</div>
+          </div>
+        </div>
+
+        <!-- 2. Electric SUVs -->
+        <div class="vcard">
+          <div class="vcard-stripe vc-blue"></div>
+          <div class="vcard-body">
+            <div class="vcard-icon-wrap">🚙</div>
+            <div class="vcard-content">
+              <div class="vcard-top">
+                <div class="vcard-title">Electric SUVs</div>
+                <div class="vcard-connector">CCS2 · DC Rapid 100–150 kW</div>
+              </div>
+              <div class="vcard-desc">Larger battery packs (60–100 kWh) mean longer range but also higher energy needs at charging stops. DC rapid chargers at 100–150 kW are ideal for highway charging, adding 100–150 km of range in just 15–20 minutes — critical for Kerala's expanding intercity EV corridors like NH 66 and NH 544.</div>
+              <div class="vcard-specs">
+                <div class="spec-item"><div class="spec-label">Max Charge Speed</div><div class="spec-value">DC 100–150 kW</div></div>
+                <div class="spec-item"><div class="spec-label">Battery Size</div><div class="spec-value">60–100 kWh</div></div>
+                <div class="spec-item"><div class="spec-label">Typical Range</div><div class="spec-value">400–600 km</div></div>
+              </div>
+              <div class="vtag-row">
+                <span class="vtag red">DC Rapid 100–150 kW</span>
+                <span class="vtag purple">CCS2</span>
+                <span class="vtag blue">Type 2 IEC 62196</span>
+                <span class="vtag orange">Highway ready</span>
+              </div>
+            </div>
+          </div>
+          <div class="models-strip">
+            <div class="models-label">Popular Models in Kerala</div>
+            <div class="models-list">Tata Punch EV · Mahindra XEV 9e · Hyundai Ioniq 5 · Kia EV9 · BYD Seal · BMW iX</div>
+          </div>
+        </div>
+
+        <!-- 3. Light Commercial -->
+        <div class="vcard">
+          <div class="vcard-stripe vc-orange"></div>
+          <div class="vcard-body">
+            <div class="vcard-icon-wrap">🛻</div>
+            <div class="vcard-content">
+              <div class="vcard-top">
+                <div class="vcard-title">Light Commercial EVs &amp; Vans</div>
+                <div class="vcard-connector">Type 2 IEC 62196 · AC Fast 22 kW</div>
+              </div>
+              <div class="vcard-desc">Electric delivery vans and light commercial vehicles are rapidly expanding across Kerala's logistics sector — especially in Ernakulam, Thiruvananthapuram, and Kozhikode urban zones. These vehicles typically charge during loading/unloading windows at AC fast chargers, making Type 2 (22 kW) the primary standard for this category.</div>
+              <div class="vcard-specs">
+                <div class="spec-item"><div class="spec-label">Charging Type</div><div class="spec-value">AC Fast 22 kW</div></div>
+                <div class="spec-item"><div class="spec-label">Charge Window</div><div class="spec-value">2–4 hrs typical</div></div>
+                <div class="spec-item"><div class="spec-label">Payload</div><div class="spec-value">0.5–3.5 tonnes</div></div>
+              </div>
+              <div class="vtag-row">
+                <span class="vtag blue">AC Fast 22 kW</span>
+                <span class="vtag purple">Type 2 IEC 62196</span>
+                <span class="vtag green">Last-mile delivery</span>
+                <span class="vtag orange">Fleet charging</span>
+              </div>
+            </div>
+          </div>
+          <div class="models-strip">
+            <div class="models-label">Popular Models in Kerala</div>
+            <div class="models-list">Tata Ace EV · Mahindra Zeo · Piaggio Porter EV · Euler HiLoad · Omega Sekel</div>
+          </div>
+        </div>
+
+        <!-- 4. Two-Wheelers -->
+        <div class="vcard">
+          <div class="vcard-stripe vc-green"></div>
+          <div class="vcard-body">
+            <div class="vcard-icon-wrap">🛵</div>
+            <div class="vcard-content">
+              <div class="vcard-top">
+                <div class="vcard-title">Electric Two-Wheelers</div>
+                <div class="vcard-connector">Bharat AC-001 · AC Slow ≤7 kW</div>
+              </div>
+              <div class="vcard-desc">The fastest-growing EV segment in Kerala, driven by high petrol prices and the emergence of premium electric scooters. Most two-wheelers charge via the Bharat AC-001 standard (a 15A domestic socket equivalent) and can fully charge overnight at home or in 3–4 hours at a dedicated slow charger. Battery swapping is also available on select models.</div>
+              <div class="vcard-specs">
+                <div class="spec-item"><div class="spec-label">Charging Type</div><div class="spec-value">AC Slow 3.3–7.4 kW</div></div>
+                <div class="spec-item"><div class="spec-label">Full Charge Time</div><div class="spec-value">3–6 hrs</div></div>
+                <div class="spec-item"><div class="spec-label">Typical Range</div><div class="spec-value">100–180 km</div></div>
+              </div>
+              <div class="vtag-row">
+                <span class="vtag green">AC Slow 3.3–7.4 kW</span>
+                <span class="vtag purple">Bharat AC-001</span>
+                <span class="vtag green">Fastest growing segment</span>
+                <span class="vtag blue">Battery swap option</span>
+              </div>
+            </div>
+          </div>
+          <div class="models-strip">
+            <div class="models-label">Popular Models in Kerala</div>
+            <div class="models-list">Ola S1 Pro · Ather 450X · TVS iQube · Bajaj Chetak · Hero Vida V1 · Bounce Infinity</div>
+          </div>
+        </div>
+
+        <!-- 5. Auto-Rickshaws -->
+        <div class="vcard">
+          <div class="vcard-stripe vc-teal"></div>
+          <div class="vcard-body">
+            <div class="vcard-icon-wrap">🛺</div>
+            <div class="vcard-content">
+              <div class="vcard-top">
+                <div class="vcard-title">Electric Auto-Rickshaws</div>
+                <div class="vcard-connector">Bharat AC-001 · AC Slow / AC Fast</div>
+              </div>
+              <div class="vcard-desc">Electric auto-rickshaws have become a staple of urban mobility in Thiruvananthapuram, Ernakulam, and Kozhikode. They typically charge during driver breaks or overnight at slow chargers. Kerala's auto-rickshaw EV fleet is growing rapidly with government incentives supporting adoption, making dedicated slow and medium charging points in city centres essential infrastructure.</div>
+              <div class="vcard-specs">
+                <div class="spec-item"><div class="spec-label">Charging Type</div><div class="spec-value">AC Slow + Fast</div></div>
+                <div class="spec-item"><div class="spec-label">Charge Window</div><div class="spec-value">3–5 hrs break charge</div></div>
+                <div class="spec-item"><div class="spec-label">Daily Range</div><div class="spec-value">120–180 km</div></div>
+              </div>
+              <div class="vtag-row">
+                <span class="vtag green">AC Slow / AC Fast</span>
+                <span class="vtag purple">Bharat AC-001</span>
+                <span class="vtag blue">Urban last-mile</span>
+                <span class="vtag orange">Government supported</span>
+              </div>
+            </div>
+          </div>
+          <div class="models-strip">
+            <div class="models-label">Popular Models in Kerala</div>
+            <div class="models-list">Mahindra Treo · Piaggio Ape E-City · OSM Rage+ · Saarthi Electric · Greaves Eltra</div>
+          </div>
+        </div>
+
+        <!-- 6. Electric Buses -->
+        <div class="vcard">
+          <div class="vcard-stripe vc-pink"></div>
+          <div class="vcard-body">
+            <div class="vcard-icon-wrap">🚌</div>
+            <div class="vcard-content">
+              <div class="vcard-top">
+                <div class="vcard-title">Electric Buses</div>
+                <div class="vcard-connector">CCS2 / CHAdeMO · DC Fast ≥50 kW</div>
+              </div>
+              <div class="vcard-desc">KSRTC Kerala has been steadily expanding its electric bus fleet on intra-city and short intercity routes. Electric buses carry 200–400 kWh battery packs and require high-power DC chargers at depots and key intercity hubs. Overnight depot charging is standard, but mid-route opportunity charging (30–45 min stops) is increasingly used on longer corridors.</div>
+              <div class="vcard-specs">
+                <div class="spec-item"><div class="spec-label">Max Charge Speed</div><div class="spec-value">DC 50–150 kW</div></div>
+                <div class="spec-item"><div class="spec-label">Battery Size</div><div class="spec-value">200–400 kWh</div></div>
+                <div class="spec-item"><div class="spec-label">Route Range</div><div class="spec-value">200–350 km</div></div>
+              </div>
+              <div class="vtag-row">
+                <span class="vtag red">DC Fast 50–150 kW</span>
+                <span class="vtag purple">CCS2</span>
+                <span class="vtag blue">KSRTC fleet</span>
+                <span class="vtag orange">Depot + en-route</span>
+              </div>
+            </div>
+          </div>
+          <div class="models-strip">
+            <div class="models-label">Popular Models in Kerala</div>
+            <div class="models-list">Olectra C9 · Tata Starbus EV · PMI Norwood · Switch EiV 12 · JBM Eco Life</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════ CONTACT FOOTER ═══════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-title">✉ Contact Us</div>
+      <div class="footer-sub">Kerala EV Charging Station Finder · SDN Project</div>
+      <div class="footer-grid">
+        <a href="mailto:ev.kerala@example.com" class="fcontact">
+          <div class="fcontact-icon">📧</div>
+          <div><div class="fcontact-label">Email</div><div class="fcontact-value">ev.kerala@example.com</div></div>
+        </a>
+        <a href="tel:+919876543210" class="fcontact">
+          <div class="fcontact-icon">📞</div>
+          <div><div class="fcontact-label">Phone</div><div class="fcontact-value">+91 98765 43210</div></div>
+        </a>
+        <div class="fcontact" style="cursor:default">
+          <div class="fcontact-icon">📍</div>
+          <div><div class="fcontact-label">Address</div><div class="fcontact-value">Kerala, India</div></div>
+        </div>
+      </div>
+      <div class="footer-copy">© 2025 VoltDrive · Context-Aware EV Charging Station Management</div>
+    </div>
+  </footer>
+
+  <!-- ═══════════ CONTACT MODAL ═══════════ -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="document.getElementById('contact-modal').classList.remove('open')">✕</button>
+      <p class="modal-title">✉ Contact Us</p>
+      <p class="modal-sub">Kerala EV Charging Station Finder · SDN Project</p>
+      <a href="mailto:ev.kerala@example.com" class="contact-item">
+        <div class="contact-icon purple">📧</div>
+        <div><div class="contact-label">Email</div><div class="contact-value">ev.kerala@example.com</div></div>
+      </a>
+      <a href="tel:+919876543210" class="contact-item">
+        <div class="contact-icon green">📞</div>
+        <div><div class="contact-label">Phone</div><div class="contact-value">+91 98765 43210</div></div>
+      </a>
+      <div class="contact-item" style="cursor:default">
+        <div class="contact-icon blue">📍</div>
+        <div><div class="contact-label">Address</div><div class="contact-value">Kerala, India</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('contact-modal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VoltDrive – About</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg,#6a6fd8 0%,#7b5ea7 45%,#9b59b6 100%); display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ── NAV ── */
+    nav { width:100%; background:rgba(255,255,255,.15); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.22); padding:0 2.5rem; height:64px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; position:sticky; top:0; z-index:100; }
+    .nav-brand { font-size:1.22rem; font-weight:800; color:#fff; letter-spacing:.02em; text-decoration:none; }
+    .nav-links { display:flex; align-items:center; gap:.25rem; list-style:none; }
+    .nav-links li a { display:block; padding:.42rem 1.05rem; border-radius:8px; color:rgba(255,255,255,.88); text-decoration:none; font-size:.9rem; font-weight:500; transition:background .2s,color .2s; white-space:nowrap; }
+    .nav-links li a:hover { background:rgba(255,255,255,.18); color:#fff; }
+    .nav-links li a.active { background:rgba(255,255,255,.25); color:#fff; font-weight:700; }
+    .nav-links li a.chat-nav { background:rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.4); color:#fff; font-weight:600; display:flex; align-items:center; gap:.35rem; padding:.4rem 1rem; }
+    .nav-links li a.chat-nav:hover { background:rgba(255,255,255,.32); }
+
+    /* ── PAGE ── */
+    .page-wrap { flex:1; padding:3rem 2rem; }
+    .content { max-width:860px; margin:0 auto; }
+
+    /* hero */
+    .page-hero { margin-bottom:2.5rem; }
+    .page-hero-badge { display:inline-flex; align-items:center; gap:.4rem; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.3); color:#fff; font-size:.75rem; font-weight:700; padding:.28rem .85rem; border-radius:999px; margin-bottom:.8rem; }
+    .page-hero-title { font-size:clamp(1.6rem,3vw,2.4rem); font-weight:800; color:#fff; line-height:1.25; margin-bottom:.6rem; }
+    .page-hero-sub { font-size:.95rem; color:rgba(255,255,255,.78); line-height:1.7; max-width:580px; }
+
+    /* stats row */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2.5rem; }
+    .stat-card { background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22); border-radius:16px; padding:1.2rem 1rem; text-align:center; }
+    .stat-num { font-size:2rem; font-weight:800; color:#fff; line-height:1; }
+    .stat-lbl { font-size:.72rem; color:rgba(255,255,255,.68); margin-top:.3rem; font-weight:600; text-transform:uppercase; letter-spacing:.07em; }
+
+    /* white content cards */
+    .section-card { background:#fff; border-radius:18px; box-shadow:0 6px 30px rgba(0,0,0,.14); padding:2rem 2.2rem; margin-bottom:1.4rem; }
+    .sc-title { font-size:1rem; font-weight:800; color:#5338a8; margin-bottom:1rem; display:flex; align-items:center; gap:.45rem; }
+    .sc-body { font-size:.88rem; color:#4a3f6b; line-height:1.85; }
+    .sc-body p { margin-bottom:.9rem; }
+    .sc-body p:last-child { margin-bottom:0; }
+    .sc-body strong { color:#3d2e6e; }
+
+    /* tech grid */
+    .tech-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1.2rem; }
+    .tech-item { background:#f7f5ff; border:1px solid #e4dffa; border-radius:12px; padding:.9rem 1rem; }
+    .tech-item-title { font-size:.82rem; font-weight:700; color:#3d2e6e; margin-bottom:.28rem; }
+    .tech-item-desc { font-size:.77rem; color:#6a5a8e; line-height:1.6; }
+
+    /* team */
+    .team-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:.5rem; }
+    .team-card { background:#f7f5ff; border:1px solid #e4dffa; border-radius:14px; padding:1.1rem; text-align:center; }
+    .team-avatar { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#6a6fd8,#9b59b6); margin:0 auto .7rem; display:flex; align-items:center; justify-content:center; font-size:1.3rem; }
+    .team-name { font-size:.85rem; font-weight:700; color:#3d2e6e; }
+    .team-role { font-size:.72rem; color:#9b59b6; font-weight:600; margin-top:.15rem; }
+
+    /* ── CONTACT FOOTER ── */
+    footer { background:rgba(255,255,255,.1); border-top:1px solid rgba(255,255,255,.18); backdrop-filter:blur(8px); padding:2.5rem 2rem 2rem; }
+    .footer-inner { max-width:860px; margin:0 auto; }
+    .footer-title { font-size:1.05rem; font-weight:800; color:#fff; margin-bottom:.18rem; }
+    .footer-sub { font-size:.78rem; color:rgba(255,255,255,.62); margin-bottom:1.4rem; }
+    .footer-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:.9rem; }
+    .fcontact { display:flex; align-items:center; gap:.8rem; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:12px; padding:.85rem 1rem; text-decoration:none; transition:background .2s; }
+    .fcontact:hover { background:rgba(255,255,255,.22); }
+    .fcontact-icon { width:38px; height:38px; border-radius:10px; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .fcontact-label { font-size:.68rem; color:rgba(255,255,255,.58); font-weight:500; }
+    .fcontact-value { font-size:.84rem; color:#fff; font-weight:600; }
+    .footer-copy { margin-top:1.2rem; font-size:.72rem; color:rgba(255,255,255,.4); text-align:center; }
+
+    @media(max-width:640px){ nav{padding:0 1rem;} .stats-row{grid-template-columns:repeat(2,1fr);} .tech-grid{grid-template-columns:1fr;} .team-grid{grid-template-columns:1fr 1fr;} .footer-grid{grid-template-columns:1fr;} }
+
+    /* ═════════ CONTACT MODAL ═════════ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 20px;
+      padding: 2rem 2.2rem; max-width: 420px; width: 90%;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3); position: relative;
+      animation: popIn .22s ease;
+    }
+    @keyframes popIn { from { opacity:0; transform:scale(.92) translateY(10px); } to { opacity:1; transform:none; } }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; font-size: 1.3rem;
+      color: #bbb; cursor: pointer; line-height: 1;
+    }
+    .modal-close:hover { color: #888; }
+    .modal-title { font-size: 1.15rem; font-weight: 800; color: #5338a8; margin-bottom: .2rem; }
+    .modal-sub { font-size: .8rem; color: #aaa; margin-bottom: 1.5rem; }
+    .contact-item {
+      display: flex; align-items: center; gap: .9rem;
+      padding: .85rem 1rem; border-radius: 12px;
+      background: #f8f7ff; border: 1px solid #ede8f8;
+      margin-bottom: .75rem; text-decoration: none; transition: background .2s;
+    }
+    .contact-item:hover { background: #ede8f8; }
+    .contact-item:last-of-type { margin-bottom: 0; }
+    .contact-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .contact-icon.purple { background: #ede8f8; }
+    .contact-icon.green  { background: #e8f5e9; }
+    .contact-icon.blue   { background: #e3f2fd; }
+    .contact-label { font-size: .7rem; color: #aaa; font-weight: 500; }
+    .contact-value { font-size: .9rem; color: #333; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-brand" href="{{ url_for('index') }}">⚡ VoltDrive</a>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('index') }}">Home</a></li>
+      <li><a href="{{ url_for('about') }}" class="active">About</a></li>
+      <li><a href="{{ url_for('feature') }}">Feature</a></li>
+      <li><a href="{{ url_for('vehicle') }}">Vehicle</a></li>
+      <li><a href="#" style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);font-weight:600;padding:.42rem 1.05rem;border-radius:8px;color:#fff;text-decoration:none;font-size:.9rem;white-space:nowrap;" onclick="document.getElementById('contact-modal').classList.add('open');return false;">✉ Contact Us</a></li>
+    </ul>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="content">
+
+      <!-- HERO -->
+      <div class="page-hero">
+        <div class="page-hero-badge">⚡ About VoltDrive</div>
+        <h1 class="page-hero-title">Intelligent EV Charging<br/>Management for Kerala</h1>
+        <p class="page-hero-sub">A context-aware platform using live OpenChargeMap data and Software Defined Networking to optimally manage, predict, and schedule EV charging resources across all 14 Kerala districts.</p>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num">14</div><div class="stat-lbl">Kerala Districts</div></div>
+        <div class="stat-card"><div class="stat-num">500+</div><div class="stat-lbl">Live Stations</div></div>
+        <div class="stat-card"><div class="stat-num">8</div><div class="stat-lbl">OCM Parameters</div></div>
+        <div class="stat-card"><div class="stat-num">7</div><div class="stat-lbl">Scoring Factors</div></div>
+      </div>
+
+      <!-- WHAT IS VOLTDRIVE -->
+      <div class="section-card">
+        <div class="sc-title">🔍 What is VoltDrive?</div>
+        <div class="sc-body">
+          <p><strong>VoltDrive</strong> is an intelligent EV charging station management and prediction platform built specifically for Kerala's fast-growing electric vehicle ecosystem. It combines live real-world data with algorithmic intelligence to help both EV drivers find the nearest available charger and infrastructure planners identify where new stations are urgently needed.</p>
+          <p>The platform fetches live data from the <strong>OpenChargeMap API</strong> — the world's largest open database of EV charging locations — and processes 8 key parameters per station: address, coordinates, number of charging points, connection type, power output, usage type, operator name, and operational status. This rich data feeds directly into VoltDrive's prediction and scheduling engine.</p>
+          <p>Real-time port availability is simulated every 15–45 seconds using <strong>time-based traffic models</strong>. Rush-hour windows (8–10 AM and 6–8 PM) trigger higher utilisation rates, while late-night hours reflect near-full availability — mirroring real EV driver behaviour patterns observed across Kerala.</p>
+        </div>
+      </div>
+
+      <!-- PREDICTION ENGINE -->
+      <div class="section-card">
+        <div class="sc-title">🔮 The Prediction Engine</div>
+        <div class="sc-body">
+          <p>VoltDrive's <strong>Future Station Predictor</strong> uses a multi-factor greedy algorithm to evaluate all 14 Kerala districts and rank them by how urgently they need new charging infrastructure. Every score is computed entirely from live OCM data — nothing is hardcoded.</p>
+          <div class="tech-grid">
+            <div class="tech-item"><div class="tech-item-title">📡 Coverage Gap (22%)</div><div class="tech-item-desc">Haversine distance to the nearest station. Districts beyond 30 km from any charger receive maximum urgency scores.</div></div>
+            <div class="tech-item"><div class="tech-item-title">🏗️ Infrastructure Density (18%)</div><div class="tech-item-desc">Total charging points relative to EV density. Zero stations = score of 100 (maximum need).</div></div>
+            <div class="tech-item"><div class="tech-item-title">⚡ Power Profile (14%)</div><div class="tech-item-desc">Identifies which speed tiers are missing — DC Fast, AC Fast, or AC Slow — and penalises gaps in the charging speed mix.</div></div>
+            <div class="tech-item"><div class="tech-item-title">🟢 Operational Uptime (14%)</div><div class="tech-item-desc">Ratio of live to total stations. Low uptime districts get a higher urgency score indicating reliability issues.</div></div>
+            <div class="tech-item"><div class="tech-item-title">🌍 Public Access (12%)</div><div class="tech-item-desc">Proportion of stations that are publicly accessible. Predominantly private-access districts score higher for public deployment need.</div></div>
+            <div class="tech-item"><div class="tech-item-title">🔌 Connector Variety (12%)</div><div class="tech-item-desc">Checks for missing standards: CCS2/CHAdeMO, Type 2 (IEC 62196), and Bharat AC-001. Missing standards leave vehicle categories underserved.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════ CONTACT FOOTER ═══════════ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-title">✉ Contact Us</div>
+      <div class="footer-sub">Kerala EV Charging Station Finder · SDN Project</div>
+      <div class="footer-grid">
+        <a href="mailto:ev.kerala@example.com" class="fcontact">
+          <div class="fcontact-icon">📧</div>
+          <div><div class="fcontact-label">Email</div><div class="fcontact-value">ev.kerala@example.com</div></div>
+        </a>
+        <a href="tel:+919876543210" class="fcontact">
+          <div class="fcontact-icon">📞</div>
+          <div><div class="fcontact-label">Phone</div><div class="fcontact-value">+91 98765 43210</div></div>
+        </a>
+        <div class="fcontact" style="cursor:default">
+          <div class="fcontact-icon">📍</div>
+          <div><div class="fcontact-label">Address</div><div class="fcontact-value">Kerala, India</div></div>
+        </div>
+      </div>
+      <div class="footer-copy">© 2025 VoltDrive · Context-Aware EV Charging Station Management</div>
+    </div>
+  </footer>
+
+  <!-- ═══════════ CONTACT MODAL ═══════════ -->
+  <div class="modal-overlay" id="contact-modal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="document.getElementById('contact-modal').classList.remove('open')">✕</button>
+      <p class="modal-title">✉ Contact Us</p>
+      <p class="modal-sub">Kerala EV Charging Station Finder · SDN Project</p>
+      <a href="mailto:ev.kerala@example.com" class="contact-item">
+        <div class="contact-icon purple">📧</div>
+        <div><div class="contact-label">Email</div><div class="contact-value">ev.kerala@example.com</div></div>
+      </a>
+      <a href="tel:+919876543210" class="contact-item">
+        <div class="contact-icon green">📞</div>
+        <div><div class="contact-label">Phone</div><div class="contact-value">+91 98765 43210</div></div>
+      </a>
+      <div class="contact-item" style="cursor:default">
+        <div class="contact-icon blue">📍</div>
+        <div><div class="contact-label">Address</div><div class="contact-value">Kerala, India</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('contact-modal').addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  </script>
+</body>
+</html>

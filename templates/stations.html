@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Station Port Manager – EV Kerala</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  background:linear-gradient(135deg,#6a6fd8 0%,#7b5ea7 45%,#9b59b6 100%);
+  display:flex;flex-direction:column;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  width:100%;height:54px;
+  background:linear-gradient(135deg,#6a6fd8 0%,#7b5ea7 45%,#9b59b6 100%);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(83,56,168,.35);
+  border-bottom:1px solid rgba(255,255,255,.18);
+}
+.back-btn{
+  display:inline-flex;align-items:center;gap:.45rem;
+  color:#fff;text-decoration:none;font-size:.86rem;font-weight:600;
+  background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);
+  border-radius:8px;padding:.38rem 1rem;transition:background .2s;
+}
+.back-btn:hover{background:rgba(255,255,255,.3)}
+.bar-title{color:rgba(255,255,255,.92);font-size:.9rem;font-weight:700}
+.bar-badge{
+  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
+  color:#fff;font-size:.7rem;font-weight:600;
+  padding:.22rem .8rem;border-radius:999px;
+}
+
+/* ── PAGE ── */
+.page{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;padding:2rem 1.2rem;gap:1.2rem;
+}
+
+/* ── WHITE CARDS ── */
+.card{
+  background:#fff;border-radius:18px;
+  box-shadow:0 6px 28px rgba(0,0,0,.13);
+  width:100%;max-width:780px;
+  overflow:hidden;
+}
+
+/* ── COUNT CARD ── */
+.count-card{
+  padding:1.6rem 2rem;text-align:center;
+}
+.count-title{
+  font-size:.82rem;font-weight:700;color:#5338a8;
+  text-align:left;margin-bottom:1rem;
+  display:flex;align-items:center;gap:.4rem;
+}
+.count-big{font-size:3.8rem;font-weight:800;color:#5338a8;line-height:1;margin-bottom:.35rem}
+.count-sub{font-size:.82rem;color:#777}
+.count-sub b{color:#5338a8}
+
+/* ── LIST CARD ── */
+.list-header{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.85rem 1.4rem;
+  border-bottom:2px solid #5338a8;
+  background:#f8f7ff;
+}
+.lh-icon{color:#5338a8;font-size:.95rem}
+.lh-title{font-size:.8rem;font-weight:800;color:#5338a8;letter-spacing:.03em}
+
+.station-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 1.4rem;
+  border-bottom:1px solid #ede8f8;
+  cursor:pointer;
+  transition:background .15s;
+  border-left:4px solid transparent;
+  gap:.8rem;
+}
+.station-item:last-child{border-bottom:none}
+.station-item:hover{background:#f8f7ff}
+.station-item.active{
+  background:#f0ecff;
+  border-left-color:#5338a8;
+}
+.si-left{flex:1;min-width:0}
+.si-name{font-size:.9rem;font-weight:700;color:#1e1638;margin-bottom:.25rem}
+.station-item.active .si-name{color:#5338a8}
+.si-tags{display:flex;gap:.4rem;flex-wrap:wrap}
+.si-tag{
+  font-size:.68rem;font-weight:600;padding:.15rem .6rem;border-radius:999px;
+}
+.si-tag.total {background:#ede8f8;color:#5338a8}
+.si-tag.avail {background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+.si-tag.occ   {background:#ffebee;color:#c62828;border:1px solid #ef9a9a}
+.si-arrow{color:#bbb;font-size:.8rem;flex-shrink:0}
+.station-item.active .si-arrow{color:#5338a8}
+
+/* ── DETAIL CARD ── */
+.detail-card{display:none}
+.detail-card.show{display:block;animation:fadeUp .22s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.detail-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.85rem 1.4rem;
+  background:#f8f7ff;
+  border-bottom:2px solid #5338a8;
+}
+.dh-left{display:flex;align-items:center;gap:.6rem}
+.dh-icon{
+  width:28px;height:28px;background:#5338a8;
+  border-radius:7px;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:.8rem;flex-shrink:0;
+}
+.dh-title{font-size:.8rem;font-weight:800;color:#5338a8}
+.dh-close{
+  width:26px;height:26px;border-radius:7px;
+  background:#f5f0ff;border:1px solid #ede8f8;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;color:#aaa;transition:all .15s;
+}
+.dh-close:hover{background:#ffebee;color:#c62828;border-color:#ef9a9a}
+
+/* detail info rows */
+.detail-rows{padding:.4rem 0}
+.dr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.72rem 1.4rem;border-bottom:1px solid #f0ecff;
+  gap:1rem;
+}
+.dr:last-child{border-bottom:none}
+.dr-label{font-size:.82rem;font-weight:700;color:#1e1638;flex-shrink:0}
+.dr-value{font-size:.82rem;color:#444;text-align:right;font-weight:500}
+.dr-value.accent{color:#5338a8;font-weight:700}
+.dr-value.green{color:#2e7d32;font-weight:700}
+
+.charge-badges{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:flex-end}
+.cb{font-size:.7rem;font-weight:700;padding:.2rem .65rem;border-radius:6px;display:inline-flex;align-items:center;gap:.2rem}
+.cb.fast{background:#fff3e0;color:#e65c00;border:1px solid #ffcc80}
+.cb.med {background:#fff8e1;color:#f5a623;border:1px solid #ffe082}
+.cb.slow{background:#e3f2fd;color:#1976d2;border:1px solid #90caf9}
+
+/* port sections */
+.ps-title{
+  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:#5338a8;padding:.55rem 1.4rem .25rem;
+  display:flex;align-items:center;gap:.4rem;
+}
+.ps-line{flex:1;height:1px;background:#ede8f8}
+
+.port-list{padding:.25rem .9rem .5rem;display:flex;flex-direction:column;gap:.4rem}
+
+.port-item{
+  display:flex;align-items:center;gap:.65rem;
+  background:#f8f7ff;border:1px solid #ede8f8;
+  border-radius:10px;padding:.58rem .85rem;
+  transition:border-color .15s;
+}
+.port-item.occupied {background:#fff5f5;border-color:#ffc0c0}
+.port-item.available{background:#f0faf2;border-color:#a5d6a7}
+
+.pi-id{font-size:.68rem;font-weight:700;color:#aaa;min-width:54px;font-family:monospace}
+.pi-badge{font-size:.65rem;font-weight:700;padding:.14rem .52rem;border-radius:6px;flex-shrink:0}
+.pi-badge.fast{background:#fff3e0;color:#e65c00;border:1px solid #ffcc80}
+.pi-badge.med {background:#fff8e1;color:#f5a623;border:1px solid #ffe082}
+.pi-badge.slow{background:#e3f2fd;color:#1976d2;border:1px solid #90caf9}
+
+.pi-status{flex:1}
+.pi-label{font-size:.73rem;font-weight:700}
+.pi-label.avail{color:#2e7d32}
+.pi-label.occ  {color:#c62828}
+.pi-info{font-size:.65rem;color:#aaa;margin-top:.1rem}
+
+.btn-add{
+  font-size:.69rem;font-weight:700;
+  background:#5338a8;color:#fff;
+  border:none;padding:.26rem .72rem;border-radius:7px;
+  cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;
+  transition:opacity .15s;
+}
+.btn-add:hover{opacity:.85}
+.btn-remove{
+  font-size:.69rem;font-weight:700;
+  background:#ffebee;color:#c62828;
+  border:1px solid #ef9a9a;padding:.26rem .68rem;border-radius:7px;
+  cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;
+  transition:all .15s;
+}
+.btn-remove:hover{background:#c62828;color:#fff}
+
+/* ── MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:1rem;
+}
+.modal-overlay.open{display:flex;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.modal-box{
+  background:#fff;border-radius:18px;padding:1.6rem;
+  width:100%;max-width:360px;
+  box-shadow:0 20px 50px rgba(83,56,168,.35);
+  animation:popUp .2s ease;
+}
+@keyframes popUp{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:none}}
+
+.modal-title{font-size:.95rem;font-weight:800;color:#5338a8;margin-bottom:.2rem}
+.modal-sub{font-size:.74rem;color:#aaa;margin-bottom:1rem}
+.modal-label{font-size:.7rem;font-weight:700;color:#333;margin-bottom:.3rem;display:block}
+.modal-input,.modal-select{
+  width:100%;border:1.5px solid #ede8f8;border-radius:9px;
+  padding:.55rem .85rem;font-size:.85rem;font-family:'Inter',sans-serif;
+  color:#333;outline:none;background:#f8f7ff;
+  transition:border-color .15s;margin-bottom:.75rem;
+}
+.modal-input:focus,.modal-select:focus{border-color:#7c5cbf}
+.modal-btns{display:flex;gap:.6rem;margin-top:.4rem}
+.mbtn-cancel{
+  flex:1;padding:.55rem;border-radius:9px;cursor:pointer;
+  background:#f5f0ff;border:1px solid #ede8f8;
+  color:#aaa;font-size:.82rem;font-weight:600;font-family:'Inter',sans-serif;
+}
+.mbtn-confirm{
+  flex:1;padding:.55rem;border-radius:9px;cursor:pointer;
+  background:linear-gradient(135deg,#6a6fd8,#7b5ea7);
+  border:none;color:#fff;font-size:.82rem;font-weight:700;font-family:'Inter',sans-serif;
+}
+.mbtn-confirm:hover{opacity:.9}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  background:#5338a8;color:#fff;
+  font-size:.78rem;font-weight:600;
+  padding:.5rem 1.2rem;border-radius:999px;
+  box-shadow:0 6px 20px rgba(83,56,168,.4);
+  z-index:10000;white-space:nowrap;
+  animation:tIn .2s ease;
+}
+.toast.out{animation:tOut .2s ease forwards}
+@keyframes tIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes tOut{to{opacity:0;transform:translate(-50%,8px)}}
+
+@media(max-width:520px){
+  .topbar{padding:0 1rem}
+  .page{padding:1.2rem .8rem}
+  .dr{flex-direction:column;align-items:flex-start;gap:.25rem}
+  .dr-value{text-align:left}
+  .charge-badges{justify-content:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="{{ url_for('index') }}" class="back-btn">← Back to Dashboard</a>
+  <span class="bar-title">🅿 Station Port Manager</span>
+  <span class="bar-badge">4 Stations</span>
+</div>
+
+<div class="page">
+
+  <!-- COUNT CARD -->
+  <div class="card count-card">
+    <div class="count-title">☰ &nbsp;Charging Stations Count</div>
+    <div class="count-big">4</div>
+    <div class="count-sub">Total <b>Available</b> Charging Stations</div>
+  </div>
+
+  <!-- STATION LIST -->
+  <div class="card">
+    <div class="list-header">
+      <span class="lh-icon">☰</span>
+      <span class="lh-title">ALL STATIONS (Tap a Station to View Details)</span>
+    </div>
+    <div id="station-list"></div>
+  </div>
+
+  <!-- DETAIL CARD -->
+  <div class="card detail-card" id="detail-card"></div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-title">⚡ Add Vehicle</div>
+    <div class="modal-sub" id="modal-sub">Select port first</div>
+    <label class="modal-label">Vehicle Number</label>
+    <input class="modal-input" id="modal-vid" placeholder="e.g. KL 07 AB 1234" maxlength="20"/>
+    <label class="modal-label">Vehicle Type</label>
+    <select class="modal-select" id="modal-vtype">
+      <option>🚗 Car</option>
+      <option>🚙 SUV</option>
+      <option>🛵 Two-Wheeler</option>
+      <option>🛺 Auto-Rickshaw</option>
+      <option>🚌 Bus</option>
+      <option>🚐 Van</option>
+    </select>
+    <div class="modal-btns">
+      <button class="mbtn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="mbtn-confirm" onclick="confirmAdd()">Add Vehicle</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════ DATA ═══════════ */
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+
+function makePorts(sid){
+  const out=[];
+  const fc=ri(1,3),mc=ri(1,4),sc=ri(1,4);
+  for(let i=1;i<=fc;i++) out.push({id:`S${sid}-F${i}`,type:'fast', label:'Fast',  kw:'50–150 kW',occupied:false,vehicle:null});
+  for(let i=1;i<=mc;i++) out.push({id:`S${sid}-M${i}`,type:'med',  label:'Medium',kw:'22 kW',    occupied:false,vehicle:null});
+  for(let i=1;i<=sc;i++) out.push({id:`S${sid}-S${i}`,type:'slow', label:'Slow',  kw:'3–7 kW',   occupied:false,vehicle:null});
+  return out;
+}
+
+const stations=[
+  {id:1,name:'Station 1',ports:makePorts(1)},
+  {id:2,name:'Station 2',ports:makePorts(2)},
+  {id:3,name:'Station 3',ports:makePorts(3)},
+  {id:4,name:'Station 4',ports:makePorts(4)},
+];
+
+let activeId=null, pending=null;
+
+/* ═══════════ HELPERS ═══════════ */
+const gs=id=>stations.find(s=>s.id===id);
+const gp=(sid,pid)=>gs(sid).ports.find(p=>p.id===pid);
+const avail=ports=>ports.filter(p=>!p.occupied).length;
+const occ=ports=>ports.filter(p=>p.occupied).length;
+const byType=(ports,t)=>ports.filter(p=>p.type===t);
+
+/* ═══════════ RENDER LIST ═══════════ */
+function renderList(){
+  document.getElementById('station-list').innerHTML=stations.map(s=>{
+    const av=avail(s.ports),oc=occ(s.ports),tot=s.ports.length;
+    return`
+    <div class="station-item ${s.id===activeId?'active':''}" onclick="tap(${s.id})">
+      <div class="si-left">
+        <div class="si-name">${s.id}. ${s.name}</div>
+        <div class="si-tags">
+          <span class="si-tag total">⚡ ${tot} Ports</span>
+          <span class="si-tag avail">✓ ${av} Available</span>
+          ${oc>0?`<span class="si-tag occ">● ${oc} Occupied</span>`:''}
+        </div>
+      </div>
+      <span class="si-arrow">${s.id===activeId?'▲':'▼'}</span>
+    </div>`}).join('');
+}
+
+/* ═══════════ RENDER DETAIL ═══════════ */
+function renderDetail(id){
+  const s=gs(id);
+  const dc=document.getElementById('detail-card');
+  dc.classList.add('show');
+
+  const av=avail(s.ports),tot=s.ports.length;
+  const fc=byType(s.ports,'fast'),mc=byType(s.ports,'med'),sc=byType(s.ports,'slow');
+
+  const cbHTML=[
+    fc.length?`<span class="cb fast">⚡ Fast: ${avail(fc)}/${fc.length}</span>`:'',
+    mc.length?`<span class="cb med">🔌 Medium: ${avail(mc)}/${mc.length}</span>`:'',
+    sc.length?`<span class="cb slow">🐢 Slow: ${avail(sc)}/${sc.length}</span>`:'',
+  ].join('');
+
+  const sections=[
+    {ports:fc,type:'fast',label:'Fast Charger (50–150 kW)',icon:'⚡'},
+    {ports:mc,type:'med', label:'Medium Charger (22 kW)',  icon:'🔌'},
+    {ports:sc,type:'slow',label:'Slow Charger (3–7 kW)',   icon:'🐢'},
+  ].filter(g=>g.ports.length>0).map(g=>{
+    const rows=g.ports.map(p=>`
+      <div class="port-item ${p.occupied?'occupied':'available'}">
+        <span class="pi-id">${p.id}</span>
+        <span class="pi-badge ${p.type}">${p.label}</span>
+        <div class="pi-status">
+          <div class="pi-label ${p.occupied?'occ':'avail'}">${p.occupied?'🔴 Occupied':'🟢 Available'}</div>
+          <div class="pi-info">${p.occupied?`${p.vehicle.type} · ${p.vehicle.id} · ${p.vehicle.since}`:`${p.kw} · Ready`}</div>
+        </div>
+        ${p.occupied
+          ?`<button class="btn-remove" onclick="removeV(${id},'${p.id}')">✕ Remove</button>`
+          :`<button class="btn-add" onclick="openModal(${id},'${p.id}')">+ Add Vehicle</button>`}
+      </div>`).join('');
+    return`
+      <div class="ps-title">${g.icon} ${g.label} <span class="ps-line"></span></div>
+      <div class="port-list">${rows}</div>`;
+  }).join('');
+
+  dc.innerHTML=`
+    <div class="detail-header">
+      <div class="dh-left">
+        <div class="dh-icon">ℹ</div>
+        <div class="dh-title">STATION DETAILS</div>
+      </div>
+      <div class="dh-close" onclick="closeDetail()">✕</div>
+    </div>
+    <div class="detail-rows">
+      <div class="dr">
+        <span class="dr-label">Station Name:</span>
+        <span class="dr-value accent">${s.name}</span>
+      </div>
+      <div class="dr">
+        <span class="dr-label">Charging Types:</span>
+        <div class="charge-badges">${cbHTML}</div>
+      </div>
+      <div class="dr">
+        <span class="dr-label">Total Ports:</span>
+        <span class="dr-value">${tot}</span>
+      </div>
+      <div class="dr">
+        <span class="dr-label">Available Ports:</span>
+        <span class="dr-value green">${av}</span>
+      </div>
+    </div>
+    ${sections}
+  `;
+  setTimeout(()=>dc.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
+}
+
+/* ═══════════ INTERACTIONS ═══════════ */
+function tap(id){
+  if(activeId===id){closeDetail();return}
+  activeId=id;renderList();renderDetail(id);
+}
+function closeDetail(){
+  activeId=null;
+  const dc=document.getElementById('detail-card');
+  dc.classList.remove('show');dc.innerHTML='';
+  renderList();
+}
+
+/* Modal */
+function openModal(sid,pid){
+  pending={sid,pid};
+  document.getElementById('modal-sub').textContent=`Port ${pid} · ${gs(sid).name}`;
+  document.getElementById('modal-vid').value='';
+  document.getElementById('modal').classList.add('open');
+  setTimeout(()=>document.getElementById('modal-vid').focus(),100);
+}
+function closeModal(){
+  pending=null;
+  document.getElementById('modal').classList.remove('open');
+}
+function confirmAdd(){
+  const vid=document.getElementById('modal-vid').value.trim();
+  const vtype=document.getElementById('modal-vtype').value;
+  if(!vid){showToast('⚠ Enter a vehicle number');return}
+  const p=gp(pending.sid,pending.pid);
+  const sid=pending.sid;
+  p.occupied=true;
+  p.vehicle={id:vid.toUpperCase(),type:vtype,since:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})};
+  closeModal();
+  renderDetail(sid);
+  renderList();
+  showToast(`✅ ${vtype} added to ${p.id}`);
+}
+function removeV(sid,pid){
+  const p=gp(sid,pid);
+  const info=p.vehicle?p.vehicle.id:'Vehicle';
+  p.occupied=false;p.vehicle=null;
+  renderDetail(sid);renderList();
+  showToast(`🔓 ${info} removed from ${pid}`);
+}
+
+/* Toast */
+let tt=null;
+function showToast(msg){
+  document.querySelector('.toast')?.remove();
+  if(tt)clearTimeout(tt);
+  const el=document.createElement('div');
+  el.className='toast';el.textContent=msg;
+  document.body.appendChild(el);
+  tt=setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),250)},2500);
+}
+
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal()});
+document.getElementById('modal-vid').addEventListener('keydown',e=>{if(e.key==='Enter')confirmAdd()});
+
+renderList();
+</script>
+</body>
+</html>

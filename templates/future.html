@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Future Prediction – EV Kerala</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --pu-dk:#4a3880;--pu-md:#6a5acd;--pu-lt:#9b8de8;--pu-pl:#ede8ff;
+      --bg:linear-gradient(135deg,#5e4b9e 0%,#7b5ea7 40%,#9561b5 100%);
+      --panel:#f7f5ff;--txt:#1e1638;--muted:#8b82a8;--bdr:#e4dffa;
+    }
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;}
+
+    /* ── TOP BAR ── */
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:.85rem 2rem;background:rgba(255,255,255,.13);border-bottom:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100;}
+    .back-btn{display:inline-flex;align-items:center;gap:.4rem;color:#fff;font-size:.82rem;font-weight:600;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);padding:.38rem 1rem;border-radius:8px;text-decoration:none;transition:background .2s;}
+    .back-btn:hover{background:rgba(255,255,255,.3)}
+    .topbar-title{color:#fff;font-size:.95rem;font-weight:700;}
+    .algo-pill{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:.72rem;font-weight:700;padding:.26rem .85rem;border-radius:999px;}
+
+    /* ── BANNER ── */
+    .banner{margin:1.4rem 2rem .8rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:1rem 1.4rem;display:flex;align-items:center;gap:1rem;backdrop-filter:blur(6px);animation:fadeDown .4s ease both;}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+    .banner-icon{font-size:1.8rem;flex-shrink:0}
+    .banner-text{flex:1}
+    .banner-title{font-size:.98rem;font-weight:700;color:#fff;margin-bottom:.12rem}
+    .banner-sub{font-size:.77rem;color:rgba(255,255,255,.8);line-height:1.5}
+    .banner-pills{display:flex;gap:.45rem;flex-shrink:0;flex-wrap:wrap;align-items:center}
+    .bp{font-size:.72rem;font-weight:700;padding:.26rem .82rem;border-radius:999px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);color:#fff;}
+    .bp.live{background:rgba(50,200,100,.25);border-color:rgba(50,200,100,.45);color:#a8ffca}
+    .bp.cache{background:rgba(255,200,50,.2);border-color:rgba(255,200,50,.4);color:#ffe8a0}
+    .bp.fall{background:rgba(255,80,80,.2);border-color:rgba(255,80,80,.4);color:#ffc0c0}
+
+    /* ── STATE ── */
+    .state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem;color:rgba(255,255,255,.85);font-size:.88rem;text-align:center;}
+    .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,.2);border-top:3px solid #fff;border-radius:50%;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .retry-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;font-size:.82rem;font-weight:600;padding:.42rem 1.2rem;border-radius:8px;cursor:pointer;margin-top:.4rem;}
+    .retry-btn:hover{background:rgba(255,255,255,.3)}
+
+    /* ── MAIN ── */
+    .main{display:flex;gap:1rem;padding:0 2rem 2rem;flex:1;animation:fadeUp .4s .1s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+    /* ── LEFT ── */
+    .left-panel{width:300px;flex-shrink:0;background:rgba(255,255,255,.95);border-radius:16px;box-shadow:0 8px 32px rgba(60,30,100,.25);display:flex;flex-direction:column;overflow:hidden;}
+    .panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.2rem;border-bottom:1px solid var(--bdr);background:var(--panel);}
+    .panel-hdr-title{font-size:.84rem;font-weight:700;color:var(--txt)}
+    .panel-count{font-size:.7rem;color:var(--muted);background:var(--pu-pl);padding:.12rem .52rem;border-radius:999px;font-weight:600;}
+    .list-wrap{overflow-y:auto;flex:1;}
+    .list-wrap::-webkit-scrollbar{width:4px}
+    .list-wrap::-webkit-scrollbar-thumb{background:#d0c8f0;border-radius:99px}
+
+    .list-item{display:flex;align-items:center;gap:.75rem;padding:.72rem 1.2rem;cursor:pointer;border-bottom:1px solid var(--bdr);border-left:3px solid transparent;transition:background .15s,border-color .15s;}
+    .list-item:hover{background:var(--pu-pl)}
+    .list-item.active{background:linear-gradient(90deg,var(--pu-pl),#f5f2ff);border-left-color:var(--pu-md);}
+    .list-item.active .li-name{color:var(--pu-md)}
+    .rank{width:28px;height:28px;flex-shrink:0;background:linear-gradient(135deg,var(--pu-md),var(--pu-lt));color:#fff;border-radius:8px;font-size:.76rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+    .list-item.active .rank{background:linear-gradient(135deg,var(--pu-dk),var(--pu-md))}
+    .li-info{flex:1;min-width:0}
+    .li-name{font-size:.87rem;font-weight:600;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .li-sub{font-size:.68rem;color:var(--muted);margin-top:.08rem}
+    .dtag{font-size:.67rem;font-weight:700;padding:.17rem .58rem;border-radius:999px;flex-shrink:0;}
+    .dh{background:#fff0f3;color:#d63060;border:1px solid #ffc0d0}
+    .dm{background:#fff7e6;color:#d47800;border:1px solid #ffd98a}
+    .dl{background:#edfaf4;color:#1f9b6b;border:1px solid #a3e9c8}
+
+    /* ── RIGHT ── */
+    .right-panel{flex:1;background:rgba(255,255,255,.95);border-radius:16px;box-shadow:0 8px 32px rgba(60,30,100,.25);display:flex;flex-direction:column;overflow:hidden;}
+    .detail-hdr{display:flex;align-items:center;gap:.6rem;padding:.9rem 1.4rem;border-bottom:1px solid var(--bdr);background:var(--panel);}
+    .detail-hdr-title{font-size:.84rem;font-weight:700;color:var(--txt)}
+    .detail-body{padding:1.4rem;overflow-y:auto;flex:1;}
+    .detail-body::-webkit-scrollbar{width:4px}
+    .detail-body::-webkit-scrollbar-thumb{background:#d0c8f0;border-radius:99px}
+    .empty-st{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:.8rem;color:var(--muted);font-size:.85rem;}
+    .empty-st .big{font-size:2.5rem;opacity:.4}
+
+    /* detail */
+    .det-name{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--txt);margin-bottom:.28rem;}
+    .det-loc{display:inline-flex;align-items:center;gap:.28rem;background:var(--pu-pl);color:var(--pu-md);font-size:.73rem;font-weight:600;padding:.22rem .7rem;border-radius:999px;margin-bottom:1rem;}
+
+    .igrid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
+    .irow{background:var(--panel);border:1px solid var(--bdr);border-radius:12px;padding:.75rem 1rem}
+    .irow.full{grid-column:1/-1}
+    .ilabel{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:.3rem}
+    .ival{font-size:.9rem;font-weight:700;color:var(--txt)}
+    .isub{font-size:.71rem;color:var(--muted);margin-top:.14rem;line-height:1.4}
+
+    .dpill{display:inline-flex;align-items:center;gap:.28rem;font-size:.78rem;font-weight:700;padding:.26rem .82rem;border-radius:999px;}
+
+    .cov-row{display:flex;align-items:center;gap:.65rem}
+    .cov-km{font-family:'DM Serif Display',serif;font-size:1.55rem;color:var(--pu-md);line-height:1}
+    .cov-meta{font-size:.7rem;color:var(--muted);line-height:1.5}
+    .sev{font-size:.71rem;font-weight:600;padding:.17rem .58rem;border-radius:999px;display:inline-block;margin-top:.3rem;}
+    .sev-c{background:#fff0f3;color:#c62828;border:1px solid #ffc0c0}
+    .sev-h{background:#fff7e6;color:#c87000;border:1px solid #ffd97a}
+    .sev-m{background:#edfaf4;color:#1f9b6b;border:1px solid #a3e9c8}
+
+    /* WHY BOX — prominent */
+    .why-box{
+      background:#fffcf0;
+      border:1px solid #f5d87a;
+      border-left:4px solid #f5a623;
+      border-radius:0 12px 12px 0;
+      padding:1rem 1.1rem;
+      font-size:.83rem;
+      color:#3d2e00;
+      line-height:1.82;
+      font-weight:450;
+    }
+    .why-box:empty::before{content:"Analysis not available for this district.";color:#aaa;font-style:italic;}
+
+    .ch-box{background:linear-gradient(135deg,#f0ecff,#e8f2ff);border:1px solid #d4c8f8;border-radius:12px;padding:.9rem 1.1rem;}
+    .ch-title{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--pu-lt);margin-bottom:.48rem}
+    .ch-name{font-size:.95rem;font-weight:700;color:var(--pu-dk);margin-bottom:.28rem}
+    .ch-reason{font-size:.78rem;color:#4a3f6b;line-height:1.65;margin-bottom:.68rem}
+
+    .port-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.58rem}
+    .pcard{flex:1;min-width:88px;border-radius:10px;padding:.55rem .7rem;text-align:center;border:1px solid;}
+    .pt{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.22rem}
+    .pn{font-size:1.3rem;font-weight:700;line-height:1}
+    .pu{font-size:.6rem;margin-top:.08rem;opacity:.65}
+    .pf{background:#ede8ff;color:#5338c8;border-color:#c9bef8}
+    .pm{background:#e8f4ff;color:#1a6db5;border-color:#b0d8f8}
+    .ps{background:#e8faf3;color:#1a8a60;border-color:#9de8c4}
+    .vtags{display:flex;flex-wrap:wrap;gap:.35rem}
+    .vtag{font-size:.68rem;font-weight:600;background:rgba(107,90,205,.08);color:var(--pu-md);border:1px solid rgba(107,90,205,.2);padding:.18rem .6rem;border-radius:999px;}
+    .mix-notes{display:flex;flex-direction:column;gap:.35rem;margin-top:.6rem}
+    .mix-note{font-size:.74rem;color:#4a3f6b;background:#f0ecff;border-left:2px solid #9b8de8;border-radius:0 6px 6px 0;padding:.42rem .68rem;line-height:1.5}
+
+    .detail-body.flash{animation:fl .18s ease}
+    @keyframes fl{0%{opacity:.35}100%{opacity:1}}
+
+    @media(max-width:700px){
+      .main{flex-direction:column;padding:0 1rem 2rem}
+      .left-panel{width:100%;max-height:255px}
+      .igrid{grid-template-columns:1fr}
+      .banner{margin:1rem 1rem .7rem}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="{{ url_for('index') }}" class="back-btn">← Back to Dashboard</a>
+    <span class="topbar-title">🔮 Future Station Prediction</span>
+    <span class="algo-pill">Greedy Algorithm</span>
+  </div>
+
+  <div class="banner">
+    <div class="banner-icon">🏆</div>
+    <div class="banner-text">
+      <div class="banner-title">Top Predicted District: <span id="bn-district">—</span></div>
+      <div class="banner-sub" id="bn-sub">Analysing all Kerala districts using live OpenChargeMap data…</div>
+    </div>
+    <div class="banner-pills">
+      <span class="bp" id="bp-count">— Districts</span>
+      <span class="bp" id="bp-demand">Demand: —</span>
+      <span class="bp" id="bp-src">⏳ Loading</span>
+    </div>
+  </div>
+
+  <div class="state" id="s-load">
+    <div class="spinner"></div>
+    <div>Fetching live prediction data…</div>
+  </div>
+  <div class="state" id="s-err" style="display:none">
+    <div style="font-size:2.2rem">⚠️</div>
+    <div>Could not load prediction data.<br>Check the Flask server is running.</div>
+    <button class="retry-btn" onclick="location.reload()">🔄 Retry</button>
+  </div>
+
+  <div class="main" id="main" style="display:none">
+    <div class="left-panel">
+      <div class="panel-hdr">
+        <span class="panel-hdr-title">Predicted Locations</span>
+        <span class="panel-count" id="list-count">0</span>
+      </div>
+      <div class="list-wrap" id="district-list"></div>
+    </div>
+    <div class="right-panel">
+      <div class="detail-hdr">
+        <span>ℹ️</span>
+        <span class="detail-hdr-title">Station Details</span>
+      </div>
+      <div class="detail-body" id="detail-body">
+        <div class="empty-st">
+          <div class="big">📍</div>
+          <div>Select a location to view details</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+  let areas = [];
+
+  const dc = d => d==='High'?'dh':d==='Medium'?'dm':'dl';
+  const di = d => d==='High'?'🔴':d==='Medium'?'🟠':'🟢';
+
+  /* port counts from demand + existing data */
+  function calcPorts(demand, sc, fast, med, slow) {
+    let nf = demand==='High'?4:demand==='Medium'?2:1;
+    let nm = demand==='High'?3:demand==='Medium'?3:2;
+    let ns = demand==='High'?2:demand==='Medium'?2:3;
+    if (sc===0)     { nf+=2; nm+=1; }
+    else if (sc<3)  { nf+=1; nm+=1; }
+    if (fast===0 && demand!=='Low') nf+=1;
+    if (med===0)  nm+=1;
+    if (slow===0) ns+=1;
+    return {fast:nf, med:nm, slow:ns};
+  }
+
+  /* fallback explanation if predictor somehow sends empty string */
+  function fallbackExplanation(a) {
+    const sc = a.stationCount;
+    let txt = '';
+    if (sc === 0) {
+      txt = `${a.district} currently has NO EV charging stations, making it the most critical gap for new infrastructure in Kerala.`;
+    } else {
+      txt = `${a.district} has only ${sc} charging station${sc>1?'s':''} which is insufficient for the growing number of EVs registered here.`;
+    }
+    if (a.distKm > 30) {
+      txt += ` The nearest station is ${a.distKm} km away — this is a severe charging desert that causes range anxiety for EV drivers.`;
+    } else if (a.distKm > 15) {
+      txt += ` With a ${a.distKm} km gap to the nearest station, local EV drivers face a significant coverage shortfall.`;
+    }
+    if (a.demand === 'High') {
+      txt += ' Charging demand is HIGH — urgent deployment is needed immediately.';
+    } else if (a.demand === 'Medium') {
+      txt += ' Demand is growing steadily and a new station should be deployed within the next 12–24 months.';
+    } else {
+      txt += ' Early investment here will catalyse EV adoption during the ramp-up phase.';
+    }
+    return txt;
+  }
+
+  async function load() {
+    try {
+      const [pr, sr] = await Promise.all([
+        fetch('/api/predict-future-station', {
+          method:'POST', headers:{'Content-Type':'application/json'}
+        }),
+        fetch('/api/stations')
+      ]);
+      const pj = await pr.json();
+      const sj = await sr.json();
+
+      /* ── console debug — paste these lines to check the raw API ── */
+      console.log('✅ API success:', pj.success);
+      console.log('✅ all_evaluations count:', (pj.all_evaluations||[]).length);
+      if ((pj.all_evaluations||[]).length > 0) {
+        const sample = pj.all_evaluations[0];
+        console.log('✅ First eval district:', sample.district);
+        console.log('✅ First eval explanation:', sample.explanation);
+        console.log('✅ First eval charger:', sample.charger_recommendation?.primary_type);
+      }
+
+      if (!pj.success || !sj.success) { showErr(); return; }
+
+      const evals = pj.all_evaluations || [];
+      if (!evals.length) { console.error('❌ all_evaluations is empty'); showErr(); return; }
+
+      /* source badge */
+      const src = (sj.stations||[])[0]?.source || '';
+      const bp  = document.getElementById('bp-src');
+      if (src.includes('Live'))        { bp.textContent='🟢 OCM Live'; bp.classList.add('live'); }
+      else if (src.includes('Cache')) { bp.textContent='🟡 Cached';   bp.classList.add('cache'); }
+      else                            { bp.textContent='🔴 Fallback'; bp.classList.add('fall'); }
+
+      /* build areas — EVERY field read directly from all_evaluations */
+      areas = evals.map((ev, i) => {
+        const cr = ev.charger_recommendation || {};
+
+        // explanation: use what the predictor sent, fall back to client-side build
+        const rawExplanation = (ev.explanation || '').trim();
+
+        const a = {
+          rank:          i + 1,
+          district:      ev.district       || '—',
+          demand:        ev.demand         || 'Medium',
+          score:         Math.round(ev.score || ev.composite_score || 0),
+          stationCount:  ev.station_count   || 0,
+          fast:          ev.total_fast      || 0,
+          medium:        ev.total_medium    || 0,
+          slow:          ev.total_slow      || 0,
+          distKm:        +(ev.dist_nearest_km || 0).toFixed(1),
+          operators:     ev.operators       || [],
+          opRatio:       ev.operational_ratio || 0,
+          conns:         ev.connection_types  || [],
+          chargerType:   cr.primary_type    || 'AC Fast Charger (22 kW)',
+          chargerReason: cr.primary_reason  || '',
+          mixNotes:      cr.mix_notes       || [],
+          vehicles:      cr.suitable_for    || [],
+          explanation:   rawExplanation,    // set below after object is created
+          ports:         null,
+        };
+
+        // compute ports
+        a.ports = calcPorts(a.demand, a.stationCount, a.fast, a.medium, a.slow);
+
+        // guarantee explanation is never empty
+        if (!a.explanation) {
+          a.explanation = fallbackExplanation(a);
+          console.warn(`⚠ Empty explanation from API for ${a.district} — using client fallback`);
+        }
+
+        return a;
+      });
+
+      /* banner */
+      const top = areas[0];
+      document.getElementById('bn-district').textContent = top.district;
+      document.getElementById('bn-sub').textContent =
+        `${areas.length} districts analysed · Highest need: ${top.district} · Demand: ${top.demand}`;
+      document.getElementById('bp-count').textContent  = areas.length + ' Districts';
+      document.getElementById('bp-demand').textContent = 'Demand: ' + top.demand;
+      document.getElementById('list-count').textContent = areas.length;
+
+      renderList();
+      document.getElementById('s-load').style.display = 'none';
+      document.getElementById('main').style.display   = 'flex';
+      selectRank(1);
+
+    } catch(e) { console.error(e); showErr(); }
+  }
+
+  function renderList() {
+    document.getElementById('district-list').innerHTML = areas.map(a => `
+      <div class="list-item" id="li-${a.rank}" onclick="sel(${a.rank})">
+        <div class="rank">${a.rank}</div>
+        <div class="li-info">
+          <div class="li-name">${a.district}</div>
+          <div class="li-sub">📍 Kerala · Score ${a.score}/100</div>
+        </div>
+        <span class="dtag ${dc(a.demand)}">${a.demand}</span>
+      </div>`).join('');
+  }
+
+  function selectRank(rank) { sel(rank); }
+  function sel(rank) {
+    const a = areas.find(x => x.rank === rank);
+    if (!a) return;
+
+    document.querySelectorAll('.list-item').forEach(el => el.classList.remove('active'));
+    const li = document.getElementById('li-' + rank);
+    if (li) { li.classList.add('active'); li.scrollIntoView({block:'nearest'}); }
+
+    const body = document.getElementById('detail-body');
+    body.classList.add('flash');
+    setTimeout(()=>body.classList.remove('flash'), 200);
+
+    const [covClass, covLabel] =
+      a.distKm>30 ? ['sev-c','⚠ Charging Desert'] :
+      a.distKm>15 ? ['sev-h','⚡ Significant Gap'] :
+                    ['sev-m','📶 Moderate Gap'];
+
+    const demSub =
+      a.demand==='High'   ? 'Infrastructure under pressure — urgent action needed' :
+      a.demand==='Medium' ? 'Rising demand — deploy now to stay ahead' :
+                            'Low but growing — early investment pays off';
+
+    const chShort =
+      a.chargerType.startsWith('DC')        ? 'DC Fast' :
+      a.chargerType.startsWith('AC Fast')   ? 'AC Fast' : 'AC Slow';
+
+    const vHtml   = a.vehicles.map(v=>`<span class="vtag">${v}</span>`).join('');
+    const mixHtml = a.mixNotes.length
+      ? `<div class="mix-notes">${a.mixNotes.map(n=>`<div class="mix-note">⚡ ${n}</div>`).join('')}</div>`
+      : '';
+
+    /* ── explanation is guaranteed non-empty — render directly ── */
+    const explanationHtml = a.explanation
+      ? a.explanation
+      : `${a.district} requires new EV charging infrastructure to support its growing fleet.`;
+
+    body.innerHTML = `
+      <div class="det-name">${a.district}</div>
+      <div class="det-loc">📍 ${a.district} · Kerala</div>
+
+      <div class="igrid">
+
+        <div class="irow">
+          <div class="ilabel">Demand Level</div>
+          <div style="margin-bottom:.3rem">
+            <span class="dpill ${dc(a.demand)}" style="font-size:.76rem;padding:.24rem .82rem">
+              ${di(a.demand)} ${a.demand} Demand
+            </span>
+          </div>
+          <div class="isub">${demSub}</div>
+        </div>
+
+        <div class="irow">
+          <div class="ilabel">Coverage Gap</div>
+          <div class="cov-row">
+            <span style="font-size:1.05rem">🗺</span>
+            <span class="cov-km">${a.distKm} km</span>
+            <div class="cov-meta">to nearest<br>station</div>
+          </div>
+          <span class="sev ${covClass}">${covLabel}</span>
+        </div>
+
+        <div class="irow">
+          <div class="ilabel">Existing Stations</div>
+          <div class="ival">${a.stationCount===0?'⚠ None':a.stationCount+' station'+(a.stationCount>1?'s':'')}</div>
+          <div class="isub">Fast: ${a.fast} · Medium: ${a.medium} · Slow: ${a.slow}</div>
+        </div>
+
+        <div class="irow">
+          <div class="ilabel">Recommended Charger</div>
+          <div style="margin-bottom:.28rem">
+            <span style="background:#ede8ff;color:#5338c8;border:1px solid #c9bef8;font-size:.77rem;font-weight:700;padding:.24rem .75rem;border-radius:999px">
+              ⚡ ${chShort}
+            </span>
+          </div>
+          <div class="isub">${a.chargerType}</div>
+        </div>
+
+        <div class="irow full">
+          <div class="ilabel">💡 Why This Area Needs a Charging Station</div>
+          <div class="why-box">${explanationHtml}</div>
+        </div>
+
+        <div class="irow full" style="background:transparent;border:none;padding:0">
+          <div class="ch-box">
+            <div class="ch-title">⚡ Suitable Charger Type &amp; Port Configuration</div>
+            <div class="ch-name">${a.chargerType}</div>
+            <div class="ch-reason">${a.chargerReason || 'See charger type above.'}</div>
+            <div class="port-row">
+              <div class="pcard pf"><div class="pt">Fast Ports</div><div class="pn">${a.ports.fast}</div><div class="pu">DC ≥50 kW</div></div>
+              <div class="pcard pm"><div class="pt">Medium Ports</div><div class="pn">${a.ports.med}</div><div class="pu">AC 22 kW</div></div>
+              <div class="pcard ps"><div class="pt">Slow Ports</div><div class="pn">${a.ports.slow}</div><div class="pu">AC ≤7 kW</div></div>
+            </div>
+            <div class="vtags">${vHtml}</div>
+            ${mixHtml}
+          </div>
+        </div>
+
+      </div>`;
+  }
+
+  function showErr(){
+    document.getElementById('s-load').style.display='none';
+    document.getElementById('s-err').style.display='flex';
+  }
+
+  window.addEventListener('DOMContentLoaded', load);
+  </script>
+</body>
+</html>
