@@ -2,9 +2,32 @@
 
 **Context-Aware Optimal Resource Scheduling Mechanism of Electric Vehicle Charging Stations using Software Defined Networks**
 
----
+## Project Overview
+This project is a web-based EV Charging Station Finder that helps electric vehicle users locate nearby charging stations efficiently. The system uses a greedy algorithm to select optimal charging stations based on distance, availability, and port type.
 
-## 🆕 NEW FEATURES IN THIS VERSION
+It also includes a future station prediction module that analyzes EV density and demand to suggest potential locations for new charging stations.
+
+## Key Features
+
+- Distance-based station sorting
+- Greedy algorithm for optimal station selection
+- Future charging station prediction
+- Google Maps integration
+- Color-coded station markers
+- Port-type filtering (Fast / Medium / Slow)
+- Interactive station selection
+- Real-time station details display
+
+## Technologies Used
+
+- Python
+- Flask
+- HTML
+- CSS
+- JavaScript
+- Google Maps API
+- Greedy Algorithm
+- JSON Dataset
 
 ### ✅ **Distance-Based Sorting**
 - Stations are **ALWAYS sorted by nearest distance** before applying max distance filter
