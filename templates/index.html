@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -7,16 +8,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #6a6fd8 0%, #7b5ea7 45%, #9b59b6 100%);
-      display: flex;
-      flex-direction: column;
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+  }
+  
+    html {
+        width: 100%;
+        overflow-x: hidden;
     }
-
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        width: 100%;
+        background: linear-gradient(135deg, #6a6fd8 0%, #7b5ea7 45%, #9b59b6 100%);
+        display: flex;
+        flex-direction: column;
+    }
     /* ═════════ NAV BAR ═════════ */
     nav {
       width: 100%;
